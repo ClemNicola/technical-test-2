@@ -38,7 +38,11 @@ module.exports = () => {
       sourceMapFilename: "[contenthash].index.js.map",
       publicPath: "/",
     },
-    resolve: { fallback: { fs: false } },
+    resolve: {
+      fallback: {
+        fs: false,
+      },
+    },
     module: {
       rules: [
         {
