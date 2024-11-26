@@ -87,17 +87,25 @@ const Activities = ({ date, user, project }) => {
   };
 
   async function onSave() {
+    const updateActivities = [...activities];
     for (let i = 0; i < activities.length; i++) {
-      await api.post(`/activity`, activities[i]);
+      const res = await api.post(`/activity`, activities[i]);
+      updateActivities[i] = res.data;
       toast.success(`Saved ${activities[i].projectName}`);
     }
+    setActivities(updateActivities);
   }
 
   async function onDelete(i) {
+    const activity = activities[i];
+    if (!activity._id) {
+      toast.error("Cannot delete activity");
+      return;
+    }
     if (window.confirm("Are you sure ?")) {
-      const activity = activities[i];
       await api.remove(`/activity/${activity._id}`);
-      toast.success(`Deleted ${activity.project}`);
+      toast.success(`Deleted ${activity.projectName}`);
+      setActivities(activities.filter((_, index) => index !== i));
     }
   }
 
@@ -149,7 +157,8 @@ const Activities = ({ date, user, project }) => {
                         <th
                           className={`w-[20px] border border-[#E5EAEF] text-[12px] font-semibold text-center ${day == 0 || day == 6 ? "bg-[#FFD5F1]" : "bg-[white]"}`}
                           key={e}
-                          day={day}>
+                          day={day}
+                        >
                           <div>{weekday}</div>
                           <div>{date}</div>
                         </th>

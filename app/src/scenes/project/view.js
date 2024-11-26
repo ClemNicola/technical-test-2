@@ -4,6 +4,7 @@ import { IoIosAt, IoIosLink, IoIosStats, IoLogoGithub } from "react-icons/io";
 import { RiRoadMapLine } from "react-icons/ri";
 import { useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import { getDaysInMonth } from "./utils";
 
@@ -36,6 +37,14 @@ export default function ProjectView() {
 
   if (!project) return <Loader />;
 
+  async function deleteProject() {
+    const confirm = window.confirm("Are you sure ?");
+    if (!confirm) return;
+    await api.remove(`/project/${project._id}`);
+    toast.success("successfully removed!");
+    history.push(`/project`);
+  }
+
   return (
     <React.Fragment>
       <div className="pl-20 pt-24 pb-4 w-[98%]">
@@ -47,8 +56,12 @@ export default function ProjectView() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => history.push(`/project/edit/${project?._id}`)}
-                className="border !border-[#0560FD] text-[#0560FD] py-[7px] px-[20px] bg-[#FFFFFF] rounded-[16px]">
+                className="border !border-[#0560FD] text-[#0560FD] py-[7px] px-[20px] bg-[#FFFFFF] rounded-[16px]"
+              >
                 Edit
+              </button>
+              <button className="ml-[10px] bg-[#F43F5E] text-[16px] font-medium text-[#FFFFFF] py-[12px] px-[22px] rounded-[10px]" onClick={deleteProject}>
+                Delete
               </button>
             </div>
           </div>
@@ -176,7 +189,8 @@ const Activities = ({ project }) => {
                         <th
                           className={`w-[20px] border border-[#E5EAEF] text-[12px] font-semibold text-center ${day == 0 || day == 6 ? "bg-[#FFD5F1]" : "bg-[white]"}`}
                           key={e}
-                          day={day}>
+                          day={day}
+                        >
                           <div>{weekday}</div>
                           <div>{date}</div>
                         </th>
